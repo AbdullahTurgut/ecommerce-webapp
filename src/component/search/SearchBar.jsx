@@ -1,6 +1,4 @@
-import React from "react";
-
-const SearchBar = () => {
+const SearchBar = ({ value, onChange }) => {
   return (
     <div className="search-bar input-group input-group-sm">
       <select className="form-control-sm">
@@ -10,6 +8,8 @@ const SearchBar = () => {
       </select>
       <input
         type="text"
+        value={value}
+        onChange={onChange}
         className="form-control"
         placeholder="Search products (e.g. iPhone, MacBook, etc.)"
       />
