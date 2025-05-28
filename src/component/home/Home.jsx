@@ -11,7 +11,9 @@ import { useSelector } from "react-redux";
 const Home = () => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
-  const { searchQuery } = useSelector((state) => state.search);
+  const { searchQuery, selectedCategory } = useSelector(
+    (state) => state.search
+  );
 
   const [errorMessage, setErrorMessage] = useState(null);
 
@@ -32,18 +34,21 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    console.log("Products:", products);
-    console.log("Filtered Products:", filteredProducts);
-    console.log("Current Page:", currentPage);
-    console.log("Current Products:", currentProducts);
     const results = products.filter((product) => {
       const matchesQuery = product.name
         .toLowerCase()
         .includes(searchQuery.toLowerCase());
-      return matchesQuery;
+
+      const matchesCategory =
+        selectedCategory === "all" ||
+        product.category.name
+          .toLowerCase()
+          .includes(selectedCategory.toLowerCase());
+
+      return matchesQuery && matchesCategory;
     });
     setFilteredProducts(results);
-  }, [searchQuery, products]);
+  }, [searchQuery, selectedCategory, products]);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
   const indexOfLastProduct = currentPage * itemsPerPage;
@@ -52,7 +57,6 @@ const Home = () => {
     indexOfFirstProduct,
     indexOfLastProduct
   );
-  console.log("Current Products:", currentProducts);
 
   return (
     <>

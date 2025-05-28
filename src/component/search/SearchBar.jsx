@@ -1,19 +1,50 @@
-const SearchBar = ({ value, onChange }) => {
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllCategories } from "../../store/features/categorySlice";
+
+const SearchBar = ({ onChange, onCategoryChange, onClear }) => {
+  const dispatch = useDispatch(); // hook to dispatch actions
+  const categories = useSelector((state) => state.category.categories);
+
+  //  const searchQuery = useSelector((state) => state.search.searchQuery);
+  //const selectedCategory = useSelector( (state) => state.search.selectedCategory ); bunların yerine
+  const { searchQuery, selectedCategory } = useSelector(
+    (state) => state.search
+  );
+
+  const handleCategoryChange = (e) => {
+    onCategoryChange(e.target.value);
+  };
+
+  useEffect(() => {
+    dispatch(getAllCategories());
+  }, [dispatch]);
+
   return (
     <div className="search-bar input-group input-group-sm">
-      <select className="form-control-sm">
+      <select
+        value={selectedCategory}
+        onChange={handleCategoryChange}
+        className="form-control-sm"
+      >
         <option value="all">All Category</option>
-        <option value="tabs">Tabs</option>
-        <option value="gadget">Gadget</option>
+        {categories.map((category) => (
+          <option key={category.id} value={category.name}>
+            {category.name}
+          </option>
+        ))}
       </select>
+
       <input
         type="text"
-        value={value}
+        value={searchQuery}
         onChange={onChange}
         className="form-control"
         placeholder="Search products (e.g. iPhone, MacBook, etc.)"
       />
-      <button className="search-button">Clear Filter</button>
+      <button className="search-button" onClick={onClear}>
+        Clear Filter
+      </button>
     </div>
   );
 };
