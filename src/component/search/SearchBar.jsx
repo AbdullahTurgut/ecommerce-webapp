@@ -1,8 +1,13 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllCategories } from "../../store/features/categorySlice";
+import {
+  setSearchQuery,
+  setSelectedCategory,
+  clearFilters,
+} from "../../store/features/searchSlice";
 
-const SearchBar = ({ onChange, onCategoryChange, onClear }) => {
+const SearchBar = () => {
   const dispatch = useDispatch(); // hook to dispatch actions
   const categories = useSelector((state) => state.category.categories);
 
@@ -13,7 +18,15 @@ const SearchBar = ({ onChange, onCategoryChange, onClear }) => {
   );
 
   const handleCategoryChange = (e) => {
-    onCategoryChange(e.target.value);
+    dispatch(setSelectedCategory(e.target.value));
+  };
+
+  const handleClearFilters = () => {
+    dispatch(clearFilters());
+  };
+
+  const handleSearchQueryChange = (e) => {
+    dispatch(setSearchQuery(e.target.value));
   };
 
   useEffect(() => {
@@ -38,11 +51,11 @@ const SearchBar = ({ onChange, onCategoryChange, onClear }) => {
       <input
         type="text"
         value={searchQuery}
-        onChange={onChange}
+        onChange={handleSearchQueryChange}
         className="form-control"
         placeholder="Search products (e.g. iPhone, MacBook, etc.)"
       />
-      <button className="search-button" onClick={onClear}>
+      <button className="search-button" onClick={handleClearFilters}>
         Clear Filter
       </button>
     </div>
