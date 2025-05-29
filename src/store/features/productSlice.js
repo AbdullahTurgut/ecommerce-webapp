@@ -25,8 +25,17 @@ export const getAllBrands = createAsyncThunk(
   }
 );
 
+export const getProductById = createAsyncThunk(
+  "product/getProductById",
+  async (productId) => {
+    const response = await api.get(`/products/product/${productId}`);
+    return response.data.data;
+  }
+);
+
 const initialState = {
   products: [],
+  product: null,
   distinctProducts: [],
   brands: [],
   selectedBrands: [],
@@ -67,6 +76,10 @@ const productSlice = createSlice({
       })
       .addCase(getAllBrands.fulfilled, (state, action) => {
         state.brands = action.payload;
+        state.isLoading = false;
+      })
+      .addCase(getProductById.fulfilled, (state, action) => {
+        state.product = action.payload;
         state.isLoading = false;
       });
   },
