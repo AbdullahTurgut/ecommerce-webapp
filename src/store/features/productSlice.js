@@ -33,12 +33,21 @@ export const getProductById = createAsyncThunk(
   }
 );
 
+export const getProductsByCategoryId = createAsyncThunk(
+  "product/getProductsByCategoryId",
+  async (categoryId) => {
+    const response = await api.get(`/products/category/${categoryId}/products`);
+    return response.data.data;
+  }
+);
+
 const initialState = {
   products: [],
   product: null,
   distinctProducts: [],
   brands: [],
   selectedBrands: [],
+  quantity: 1,
   errorMessage: null,
   isLoading: true,
 };
@@ -54,6 +63,14 @@ const productSlice = createSlice({
       } else {
         state.selectedBrands = state.selectedBrands.filter((b) => b !== brand);
       }
+    },
+    decreaseQuantity(state) {
+      if (state.quantity > 1) {
+        state.quantity--;
+      }
+    },
+    increaseQuantity(state) {
+      state.quantity++;
     },
   },
   extraReducers: (builder) => {
@@ -81,9 +98,15 @@ const productSlice = createSlice({
       .addCase(getProductById.fulfilled, (state, action) => {
         state.product = action.payload;
         state.isLoading = false;
+      })
+      .addCase(getProductsByCategoryId.fulfilled, (state, action) => {
+        state.products = action.payload;
+        state.errorMessage = null;
+        state.isLoading = false;
       });
   },
 });
 
-export const { filterByBrands } = productSlice.actions;
+export const { filterByBrands, decreaseQuantity, increaseQuantity } =
+  productSlice.actions;
 export default productSlice.reducer;
