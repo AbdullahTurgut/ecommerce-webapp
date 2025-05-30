@@ -51,10 +51,7 @@ const ProductDetails = () => {
                 <FaShoppingCart className="me-2" />
                 Add to Cart
               </button>
-              <button className="buy-now-button btn btn-warning d-flex align-items-center">
-                <FaBolt />
-                Buy Now
-              </button>
+              <button className="buy-now-button">Buy Now</button>
             </div>
           </div>
         </div>
