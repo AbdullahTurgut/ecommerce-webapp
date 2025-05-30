@@ -8,6 +8,7 @@ import {
 import RootLayout from "./component/layout/RootLayout";
 import Home from "./component/home/Home";
 import Product from "./component/product/Product";
+import ProductDetails from "./component/product/ProductDetails";
 
 function App() {
   const router = createBrowserRouter(
@@ -16,6 +17,14 @@ function App() {
         <Route index element={<Home />} />
         <Route path="/products" element={<Product />} />
         <Route path="/products/:name" element={<Product />} />
+        <Route
+          path="/product/:productId/details"
+          element={<ProductDetails />}
+        />
+        <Route
+          path="/products/category/:categoryId/products"
+          element={<Product />}
+        />
       </Route>
     )
   );

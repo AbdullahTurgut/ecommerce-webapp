@@ -1,6 +1,17 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { FaFacebookF, FaTwitter, FaInstagram } from "react-icons/fa";
+import { getAllCategories } from "../../store/features/categorySlice";
+import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+
 const Footer = () => {
+  const dispatch = useDispatch();
+  const categories = useSelector((state) => state.category.categories);
+
+  useEffect(() => {
+    dispatch(getAllCategories());
+  }, [dispatch]);
+
   return (
     <footer className="mega-footer">
       <div className="footer-container">
@@ -15,9 +26,13 @@ const Footer = () => {
         <div className="footer-section">
           <h3>Category</h3>
           <ul>
-            <li>One</li>
-            <li>Two</li>
-            <li>Three</li>
+            {categories.map((category) => (
+              <li key={category.id}>
+                <Link to={`/products/category/${category.id}/products`}>
+                  {category.name}
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
         <div className="footer-section">
