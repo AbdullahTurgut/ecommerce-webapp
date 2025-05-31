@@ -3,6 +3,7 @@ import { Navbar, Nav, NavDropdown, Container } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 const NavBar = () => {
+  const userId = 1;
   return (
     <Navbar expand="lg" sticky="top" className="nav-bg">
       <Container>
@@ -46,6 +47,8 @@ const NavBar = () => {
                 Login
               </NavDropdown.Item>
             </NavDropdown>
+
+            <Link to={`/user/${userId}/my-cart`}>Cart</Link>
           </Nav>
         </Navbar.Collapse>
       </Container>
