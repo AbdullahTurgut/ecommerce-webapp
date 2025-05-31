@@ -10,6 +10,8 @@ import { Card } from "react-bootstrap";
 import ProductImage from "../utils/ProductImage";
 import QuantityUpdater from "../utils/QuantityUpdater";
 import LoadSpinner from "../common/LoadSpinner";
+import { toast, ToastContainer } from "react-toastify";
+
 const Cart = () => {
   const { userId } = useParams();
   const dispatch = useDispatch();
@@ -48,7 +50,12 @@ const Cart = () => {
   };
 
   const handleRemoveItem = (productId) => {
-    dispatch(removeItemFromCart({ cartId, productId }));
+    try {
+      dispatch(removeItemFromCart({ cartId, productId }));
+      toast.success("Item removed successfully");
+    } catch (error) {
+      toast.error(error.message);
+    }
   };
 
   if (isLoading) {
@@ -57,6 +64,7 @@ const Cart = () => {
 
   return (
     <div className="container mt-5 mb-5 p-5">
+      <ToastContainer />
       <div className="d-flex flex-column">
         <div className="d-flex justify-content-between mb-4 fw-bold">
           <div className="text-center">Image</div>
