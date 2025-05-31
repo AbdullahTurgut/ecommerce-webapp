@@ -11,6 +11,7 @@ import Product from "./component/product/Product";
 import ProductDetails from "./component/product/ProductDetails";
 import "react-toastify/dist/ReactToastify.css";
 import Cart from "./component/cart/Cart";
+import Order from "./component/order/Order";
 
 function App() {
   const router = createBrowserRouter(
@@ -28,6 +29,7 @@ function App() {
           element={<Product />}
         />
         <Route path="/user/:userId/my-cart" element={<Cart />} />
+        <Route path="/user/:userId/my-orders" element={<Order />} />
       </Route>
     )
   );

@@ -5,9 +5,18 @@ export const placeOrders = createAsyncThunk(
   "order/placeOrders",
   async (userId) => {
     const response = await api.post(`/orders/user/${userId}/place-order`);
-    console.log("response data from order slice", response.data);
-    console.log("response data from order slice", response.data.data);
+
     return response.data;
+  }
+);
+
+export const getUserOrders = createAsyncThunk(
+  "order/getUserOrders",
+  async (userId) => {
+    const response = await api.get(`/orders/user/${userId}/order`);
+    console.log("response 1", response.data);
+    console.log("response 1", response.data.data);
+    return response.data.data;
   }
 );
 
@@ -23,11 +32,16 @@ const orderSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(placeOrders.fulfilled, (state, action) => {
-      state.orders.push(action.payload);
-      state.isLoading = false;
-      state.successMessage = action.payload.message;
-    });
+    builder
+      .addCase(placeOrders.fulfilled, (state, action) => {
+        state.orders.push(action.payload);
+        state.isLoading = false;
+        state.successMessage = action.payload.message;
+      })
+      .addCase(getUserOrders.fulfilled, (state, action) => {
+        state.orders = action.payload;
+        state.isLoading = false;
+      });
   },
 });
 
