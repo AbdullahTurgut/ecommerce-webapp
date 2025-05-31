@@ -1,21 +1,46 @@
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
-import { getProductById } from "../../store/features/productSlice";
+import { getProductById, setQuantity } from "../../store/features/productSlice";
 import ImageZoomify from "../common/ImageZoomify";
 import QuantityUpdater from "../utils/QuantityUpdater";
-import { FaShoppingCart, FaBolt } from "react-icons/fa";
+import { FaShoppingCart } from "react-icons/fa";
+import { addToCart } from "../../store/features/cartSlice";
+import { toast, ToastContainer } from "react-toastify";
+
 const ProductDetails = () => {
   const { productId } = useParams();
   const dispatch = useDispatch();
-  const product = useSelector((state) => state.product.product);
+  const { product, quantity } = useSelector((state) => state.product);
+  const { successMessage, errorMessage } = useSelector((state) => state.cart);
 
   useEffect(() => {
     dispatch(getProductById(productId));
   }, [dispatch, productId]);
 
+  const handleAddToCart = () => {
+    try {
+      dispatch(addToCart({ productId, quantity }));
+      toast.success(successMessage);
+    } catch (error) {
+      if (errorMessage) {
+        toast.error(errorMessage);
+      } else {
+        toast.error(error.message);
+      }
+    }
+  };
+
+  const handleIncreaseQuantity = () => {
+    dispatch(setQuantity(quantity + 1));
+  };
+  const handleDecreaseQuantity = () => {
+    dispatch(setQuantity(quantity - 1));
+  };
+
   return (
     <div className="container">
+      <ToastContainer />
       {product ? (
         <div className="row product-details">
           <div className="col-md-2">
@@ -45,9 +70,13 @@ const ProductDetails = () => {
             <p>
               <b>Quantity: </b>
             </p>
-            <QuantityUpdater />
+            <QuantityUpdater
+              quantity={quantity}
+              onDecrease={handleDecreaseQuantity}
+              onIncrease={handleIncreaseQuantity}
+            />
             <div className="d-flex gap-2 mt-3">
-              <button className="add-to-cart-button">
+              <button className="add-to-cart-button" onClick={handleAddToCart}>
                 <FaShoppingCart className="me-2" />
                 Add to Cart
               </button>

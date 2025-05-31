@@ -64,13 +64,8 @@ const productSlice = createSlice({
         state.selectedBrands = state.selectedBrands.filter((b) => b !== brand);
       }
     },
-    decreaseQuantity(state) {
-      if (state.quantity > 1) {
-        state.quantity--;
-      }
-    },
-    increaseQuantity(state) {
-      state.quantity++;
+    setQuantity: (state, action) => {
+      state.quantity = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -97,6 +92,7 @@ const productSlice = createSlice({
       })
       .addCase(getProductById.fulfilled, (state, action) => {
         state.product = action.payload;
+        state.quantity = 1;
         state.isLoading = false;
       })
       .addCase(getProductsByCategoryId.fulfilled, (state, action) => {
@@ -107,6 +103,5 @@ const productSlice = createSlice({
   },
 });
 
-export const { filterByBrands, decreaseQuantity, increaseQuantity } =
-  productSlice.actions;
+export const { filterByBrands, setQuantity } = productSlice.actions;
 export default productSlice.reducer;
