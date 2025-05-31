@@ -11,6 +11,7 @@ import ProductImage from "../utils/ProductImage";
 import QuantityUpdater from "../utils/QuantityUpdater";
 import LoadSpinner from "../common/LoadSpinner";
 import { toast, ToastContainer } from "react-toastify";
+import { placeOrders } from "../../store/features/orderSlice";
 
 const Cart = () => {
   const { userId } = useParams();
@@ -18,6 +19,7 @@ const Cart = () => {
   const cart = useSelector((state) => state.cart);
   const cartId = useSelector((state) => state.cart.cartId);
   const isLoading = useSelector((state) => state.cart.isLoading);
+  const successMessage = useSelector((state) => state.order.successMessage);
 
   useEffect(() => {
     dispatch(getUserCart(userId));
@@ -55,6 +57,15 @@ const Cart = () => {
       toast.success("Item removed successfully");
     } catch (error) {
       toast.error(error.message);
+    }
+  };
+
+  const handlePlaceOrder = () => {
+    if (cart.items.length > 0) {
+      dispatch(placeOrders(userId));
+      toast.success(successMessage);
+    } else {
+      toast.error("Cannot place order on empty cart");
     }
   };
 
@@ -126,7 +137,9 @@ const Cart = () => {
           </h4>
           <div className="ms-auto checkout-links">
             <Link to={"/products"}>Continue Shopping</Link>
-            <Link to={"#"}>Proceed to Checkout</Link>
+            <Link to={"#"} onClick={handlePlaceOrder}>
+              Proceed to Checkout
+            </Link>
           </div>
         </div>
       </div>
