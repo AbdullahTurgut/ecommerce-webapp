@@ -1,8 +1,10 @@
-import React from "react";
 import { Navbar, Nav, NavDropdown, Container } from "react-bootstrap";
+import { FaShoppingCart } from "react-icons/fa";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
 const NavBar = () => {
+  const cart = useSelector((state) => state.cart);
   const userId = 1;
   return (
     <Navbar expand="lg" sticky="top" className="nav-bg">
@@ -48,7 +50,17 @@ const NavBar = () => {
               </NavDropdown.Item>
             </NavDropdown>
 
-            <Link to={`/user/${userId}/my-cart`}>Cart</Link>
+            <Link
+              to={`/user/${userId}/my-cart`}
+              className="nav-link me-1 position-relative"
+            >
+              <FaShoppingCart className="shopping-cart-icon" />
+              {cart.items.length > 0 ? (
+                <div className="badge-overlay">{cart.items.length}</div>
+              ) : (
+                <div className="badge-overlay">0</div>
+              )}
+            </Link>
           </Nav>
         </Navbar.Collapse>
       </Container>

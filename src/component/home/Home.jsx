@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setTotalItems } from "../../store/features/paginationSlice";
 import { getDistinctProductsByName } from "../../store/features/productSlice";
 import LoadSpinner from "../common/LoadSpinner";
+import StockStatus from "../utils/StockStatus";
 
 const Home = () => {
   const dispatch = useDispatch();
@@ -84,7 +85,9 @@ const Home = () => {
                   {product.name} - {product.description}
                 </p>
                 <h4 className="price">{product.price}</h4>
-                <p className="text-success">{product.inventory} in stock</p>
+                <p>
+                  <StockStatus inventory={product.inventory} />
+                </p>
                 <Link
                   to={`/products/${product.name}`}
                   className="shop-now-button"

@@ -5,6 +5,7 @@ import {
   getUserCart,
   removeItemFromCart,
   updateQuantity,
+  clearCart,
 } from "../../store/features/cartSlice";
 import { Card } from "react-bootstrap";
 import ProductImage from "../utils/ProductImage";
@@ -60,10 +61,15 @@ const Cart = () => {
     }
   };
 
-  const handlePlaceOrder = () => {
+  const handlePlaceOrder = async () => {
     if (cart.items.length > 0) {
-      dispatch(placeOrders(userId));
-      toast.success(successMessage);
+      try {
+        const result = await dispatch(placeOrders(userId)).unwrap();
+        dispatch(clearCart());
+        toast.success(result.message);
+      } catch (error) {
+        toast.error(error.message);
+      }
     } else {
       toast.error("Cannot place order on empty cart");
     }
@@ -76,73 +82,78 @@ const Cart = () => {
   return (
     <div className="container mt-5 mb-5 p-5">
       <ToastContainer />
-      <div className="d-flex flex-column">
-        <div className="d-flex justify-content-between mb-4 fw-bold">
-          <div className="text-center">Image</div>
-          <div className="text-center">Name</div>
-          <div className="text-center">Brand</div>
-          <div className="text-center">Price</div>
-          <div className="text-center">Quantity</div>
-          <div className="text-center">Total Price</div>
-          <div className="text-center">Action</div>
-        </div>
 
-        <hr className="mb-2 mt-2" />
+      {cart.items.length === 0 ? (
+        <h3 className="mb-4 cart-title">Your Cart is Empty</h3>
+      ) : (
+        <div className="d-flex flex-column">
+          <div className="d-flex justify-content-between mb-4 fw-bold">
+            <div className="text-center">Image</div>
+            <div className="text-center">Name</div>
+            <div className="text-center">Brand</div>
+            <div className="text-center">Price</div>
+            <div className="text-center">Quantity</div>
+            <div className="text-center">Total Price</div>
+            <div className="text-center">Action</div>
+          </div>
 
-        <h3 className="mb-4 cart-title">My Shopping Cart</h3>
+          <hr className="mb-2 mt-2" />
 
-        {cart.items.map((item, index) => (
-          <Card key={index} className="mb-4">
-            <Card.Body className="d-flex justify-content-between align-items-center shadow">
-              <div className="d-flex align-items-center">
-                <Link to={"#"}>
-                  <div className="cart-image-container">
-                    {item.product.images.length > 0 && (
-                      <ProductImage productId={item.product.images[0].id} />
-                    )}
-                  </div>
-                </Link>
-              </div>
+          <h3 className="mb-4 cart-title">My Shopping Cart</h3>
 
-              <div className="text-center">{item.product.name}</div>
-              <div className="text-center">{item.product.brand}</div>
-              <div className="text-center">
-                ${item.product.price.toFixed(2)}
-              </div>
-              <div className="text-center">
-                <QuantityUpdater
-                  quantity={item.quantity}
-                  onIncrease={() => handleIncreaseQuantity(item.product.id)}
-                  onDecrease={() => handleDecreaseQuantity(item.product.id)}
-                />
-              </div>
-              <div className="text-center">${item.totalPrice.toFixed(2)}</div>
-              <div>
-                <Link
-                  to={"#"}
-                  onClick={() => handleRemoveItem(item.product.id)}
-                >
-                  Remove
-                </Link>
-              </div>
-            </Card.Body>
-          </Card>
-        ))}
+          {cart.items.map((item, index) => (
+            <Card key={index} className="mb-4">
+              <Card.Body className="d-flex justify-content-between align-items-center shadow">
+                <div className="d-flex align-items-center">
+                  <Link to={"#"}>
+                    <div className="cart-image-container">
+                      {item.product.images.length > 0 && (
+                        <ProductImage productId={item.product.images[0].id} />
+                      )}
+                    </div>
+                  </Link>
+                </div>
 
-        <hr />
+                <div className="text-center">{item.product.name}</div>
+                <div className="text-center">{item.product.brand}</div>
+                <div className="text-center">
+                  ${item.product.price.toFixed(2)}
+                </div>
+                <div className="text-center">
+                  <QuantityUpdater
+                    quantity={item.quantity}
+                    onIncrease={() => handleIncreaseQuantity(item.product.id)}
+                    onDecrease={() => handleDecreaseQuantity(item.product.id)}
+                  />
+                </div>
+                <div className="text-center">${item.totalPrice.toFixed(2)}</div>
+                <div>
+                  <Link
+                    to={"#"}
+                    onClick={() => handleRemoveItem(item.product.id)}
+                  >
+                    Remove
+                  </Link>
+                </div>
+              </Card.Body>
+            </Card>
+          ))}
 
-        <div className="cart-footer d-flex align-items-center mt-4">
-          <h4 className="mb-0 cart-title">
-            Total Cart Amount : ${cart.totalAmount.toFixed(2)}
-          </h4>
-          <div className="ms-auto checkout-links">
-            <Link to={"/products"}>Continue Shopping</Link>
-            <Link to={"#"} onClick={handlePlaceOrder}>
-              Proceed to Checkout
-            </Link>
+          <hr />
+
+          <div className="cart-footer d-flex align-items-center mt-4">
+            <h4 className="mb-0 cart-title">
+              Total Cart Amount : ${cart.totalAmount.toFixed(2)}
+            </h4>
+            <div className="ms-auto checkout-links">
+              <Link to={"/products"}>Continue Shopping</Link>
+              <Link to={"#"} onClick={handlePlaceOrder}>
+                Proceed to Checkout
+              </Link>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
