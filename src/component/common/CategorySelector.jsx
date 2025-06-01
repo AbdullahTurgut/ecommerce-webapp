@@ -40,7 +40,43 @@ const CategorySelector = ({
     setNewCategory(e.target.value);
   };
 
-  return <div className="mb-3"></div>;
+  return (
+    <div className="mb-3">
+      <label className="form-label">Categories: </label>
+      <select
+        className="form-select"
+        required
+        value={selectedCategory}
+        onChange={handleCategoryChange}
+      >
+        <option value="">All Categories</option>
+        <option value="New">Add new category</option>
+        {categories.map((category, index) => {
+          <option key={index} value={category.name}>
+            {category.name}
+          </option>;
+        })}
+      </select>
+      {showNewCategoryInput && (
+        <div className="input-group">
+          <input
+            type="text"
+            className="form-control"
+            value={newCategory}
+            placeholder="enter new category"
+            onChange={handleNewCategoryChange}
+          />
+          <button
+            className="btn btn-secondary btn-sm"
+            type="button"
+            onClick={handleAddNewCategory}
+          >
+            Add Category
+          </button>
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default CategorySelector;
