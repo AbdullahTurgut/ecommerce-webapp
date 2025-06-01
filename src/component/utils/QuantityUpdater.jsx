@@ -1,10 +1,14 @@
 import { BsDash, BsPlus } from "react-icons/bs";
 
-const QuantityUpdater = ({ quantity, onIncrease, onDecrease }) => {
+const QuantityUpdater = ({ disabled, quantity, onIncrease, onDecrease }) => {
   return (
     <section style={{ width: "150px" }}>
       <div className="input-group">
-        <button onClick={onDecrease} className="btn btn-outline-secondary">
+        <button
+          onClick={onDecrease}
+          className="btn btn-outline-secondary"
+          disabled={disabled}
+        >
           <BsDash />
         </button>
         <input
@@ -12,9 +16,14 @@ const QuantityUpdater = ({ quantity, onIncrease, onDecrease }) => {
           name="quantity"
           value={quantity}
           readOnly
+          disabled={disabled}
           className="form-control text-center"
         />
-        <button onClick={onIncrease} className="btn btn-outline-success">
+        <button
+          onClick={onIncrease}
+          className="btn btn-outline-success"
+          disabled={disabled}
+        >
           <BsPlus />
         </button>
       </div>
