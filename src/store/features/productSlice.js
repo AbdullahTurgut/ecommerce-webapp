@@ -56,7 +56,7 @@ const productSlice = createSlice({
   name: "product",
   initialState,
   reducers: {
-    filterByBrands(state, action) {
+    filterByBrands: (state, action) => {
       const { brand, isChecked } = action.payload;
       if (isChecked) {
         state.selectedBrands.push(brand);
@@ -66,6 +66,9 @@ const productSlice = createSlice({
     },
     setQuantity: (state, action) => {
       state.quantity = action.payload;
+    },
+    addBrand: (state, action) => {
+      state.brands.push(action.payload);
     },
   },
   extraReducers: (builder) => {
@@ -103,5 +106,5 @@ const productSlice = createSlice({
   },
 });
 
-export const { filterByBrands, setQuantity } = productSlice.actions;
+export const { filterByBrands, setQuantity, addBrand } = productSlice.actions;
 export default productSlice.reducer;
