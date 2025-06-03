@@ -26,8 +26,8 @@ const Footer = () => {
         <div className="footer-section">
           <h3>Category</h3>
           <ul>
-            {categories.map((category) => (
-              <li key={category.id}>
+            {categories.map((category, index) => (
+              <li key={index}>
                 <Link to={`/products/category/${category.id}/products`}>
                   {category.name}
                 </Link>

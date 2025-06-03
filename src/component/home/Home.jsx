@@ -85,9 +85,9 @@ const Home = () => {
                   {product.name} - {product.description}
                 </p>
                 <h4 className="price">{product.price}</h4>
-                <p>
-                  <StockStatus inventory={product.inventory} />
-                </p>
+
+                <StockStatus inventory={product.inventory} />
+
                 <Link
                   to={`/products/${product.name}`}
                   className="shop-now-button"

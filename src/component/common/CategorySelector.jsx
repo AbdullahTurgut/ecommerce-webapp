@@ -15,13 +15,14 @@ const CategorySelector = ({
 }) => {
   const dispatch = useDispatch();
   const categories = useSelector((state) => state.category.categories);
+
   useEffect(() => {
     dispatch(getAllCategories());
   }, [dispatch]);
 
   const handleAddNewCategory = () => {
     if (newCategory !== "") {
-      dispatch(addCategory(newCategory));
+      dispatch(addCategory({ name: newCategory }));
       onCategoryChange(newCategory);
       setNewCategory("");
       setShowNewCategoryInput(false);
@@ -42,7 +43,7 @@ const CategorySelector = ({
 
   return (
     <div className="mb-3">
-      <label className="form-label">Categories: </label>
+      <label className="form-label"> Categories :</label>
       <select
         className="form-select"
         required
@@ -50,12 +51,12 @@ const CategorySelector = ({
         onChange={handleCategoryChange}
       >
         <option value="">All Categories</option>
-        <option value="New">Add new category</option>
-        {categories.map((category, index) => {
+        <option value="New">Add New Category</option>
+        {categories.map((category, index) => (
           <option key={index} value={category.name}>
             {category.name}
-          </option>;
-        })}
+          </option>
+        ))}
       </select>
       {showNewCategoryInput && (
         <div className="input-group">
@@ -63,7 +64,7 @@ const CategorySelector = ({
             type="text"
             className="form-control"
             value={newCategory}
-            placeholder="enter new category"
+            placeholder="Enter new category"
             onChange={handleNewCategoryChange}
           />
           <button

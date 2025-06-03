@@ -40,7 +40,7 @@ const BrandSelector = ({
 
   return (
     <div className="mb-3">
-      <label className="form-label">Brands: </label>
+      <label className="form-label"> Brands :</label>
       <select
         className="form-select"
         required
@@ -48,21 +48,20 @@ const BrandSelector = ({
         onChange={handleBrandChange}
       >
         <option value="">All Brands</option>
-        <option value="New">Add new brand</option>
-        {brands.map((brand, index) => {
+        <option value="New">Add New Brand</option>
+        {brands.map((brand, index) => (
           <option key={index} value={brand}>
             {brand}
-          </option>;
-        })}
+          </option>
+        ))}
       </select>
-
       {showNewBrandInput && (
         <div className="input-group">
           <input
             type="text"
             className="form-control"
             value={newBrand}
-            placeholder="enter new brand"
+            placeholder="Enter new brand"
             onChange={handleNewBrandChange}
           />
           <button
