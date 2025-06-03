@@ -9,6 +9,15 @@ export const getAllProducts = createAsyncThunk(
   }
 );
 
+export const addNewProduct = createAsyncThunk(
+  "product/addNewProduct",
+  async (product) => {
+    const response = await api.post("/products/add-product", product);
+
+    return response.data.data;
+  }
+);
+
 export const getDistinctProductsByName = createAsyncThunk(
   "product/getDistinctProductsByName",
   async () => {
@@ -56,7 +65,7 @@ const productSlice = createSlice({
   name: "product",
   initialState,
   reducers: {
-    filterByBrands(state, action) {
+    filterByBrands: (state, action) => {
       const { brand, isChecked } = action.payload;
       if (isChecked) {
         state.selectedBrands.push(brand);
@@ -66,6 +75,9 @@ const productSlice = createSlice({
     },
     setQuantity: (state, action) => {
       state.quantity = action.payload;
+    },
+    addBrand: (state, action) => {
+      state.brands.push(action.payload);
     },
   },
   extraReducers: (builder) => {
@@ -99,9 +111,14 @@ const productSlice = createSlice({
         state.products = action.payload;
         state.errorMessage = null;
         state.isLoading = false;
+      })
+      .addCase(addNewProduct.fulfilled, (state, action) => {
+        state.products.push(action.payload);
+        state.errorMessage = null;
+        state.isLoading = false;
       });
   },
 });
 
-export const { filterByBrands, setQuantity } = productSlice.actions;
+export const { filterByBrands, setQuantity, addBrand } = productSlice.actions;
 export default productSlice.reducer;
