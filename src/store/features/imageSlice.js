@@ -13,22 +13,50 @@ export const uploadImages = createAsyncThunk(
       formData.append("files", files);
     }
     formData.append("productId", productId);
-    console.log("the formdata from the image slice: ", formData);
     const response = await api.post("/images/upload", formData);
-    console.log("the response from the image slice 1", response);
-    console.log("the response from the image slice 2", response.data);
-    console.log("the response from the image slice 3", response.data.data);
+
     return response.data;
   }
 );
 
-const initialState = {};
+export const updateProductImage = createAsyncThunk(
+  "image/updateProductImage",
+  async ({ imageId, file }) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    const response = await api.put(`/images/image/${imageId}`, formData);
+    return response.data;
+  }
+);
+
+export const deleteProductImage = createAsyncThunk(
+  "image/deleteProductImage",
+  async (imageId) => {
+    const response = await api.delete(`images/image/${imageId}`);
+    return response.data;
+  }
+);
+
+const initialState = {
+  uploadedImages: [],
+};
 
 const imageSlice = createSlice({
   name: "image",
   initialState,
   reducers: {},
-  extraReducers: (builder) => {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(uploadImages.fulfilled, (state, action) => {
+        state.uploadedImages = [
+          ...state.uploadedImages,
+          ...action.payload.data,
+        ];
+      })
+      .addCase(updateProductImage.fulfilled, (state, action) => {
+        state.uploadedImages = [...state.uploadedImages, action.payload.data];
+      });
+  },
 });
 
 export default imageSlice.reducer;

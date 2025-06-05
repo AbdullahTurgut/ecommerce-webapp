@@ -18,6 +18,25 @@ export const addNewProduct = createAsyncThunk(
   }
 );
 
+export const updateProduct = createAsyncThunk(
+  "product/updateProduct",
+  async ({ productId, updatedProduct }) => {
+    const response = await api.put(
+      `/products/${productId}/update`,
+      updatedProduct
+    );
+    return response.data;
+  }
+);
+export const deleteProduct = createAsyncThunk(
+  "product/deleteProduct",
+  async (productId) => {
+    const response = await api.delete(`/products/${productId}/delete`);
+
+    return response.data;
+  }
+);
+
 export const getDistinctProductsByName = createAsyncThunk(
   "product/getDistinctProductsByName",
   async () => {
@@ -116,6 +135,16 @@ const productSlice = createSlice({
         state.products.push(action.payload);
         state.errorMessage = null;
         state.isLoading = false;
+      })
+      .addCase(updateProduct.fulfilled, (state, action) => {
+        state.product = action.payload.data;
+        state.errorMessage = null;
+        state.isLoading = false;
+      })
+      .addCase(deleteProduct.fulfilled, (state, action) => {
+        state.products = state.products.filter(
+          (product) => product.id !== action.payload.data
+        );
       });
   },
 });
