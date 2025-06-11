@@ -11,7 +11,8 @@ const Order = () => {
 
   useEffect(() => {
     dispatch(getUserOrders(userId));
-    toast.success("Orders placed successfully.");
+
+    // toast.success("Orders placed successfully.");
   }, [dispatch, userId]);
 
   return (
