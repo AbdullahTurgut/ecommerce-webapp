@@ -14,6 +14,7 @@ import Cart from "./component/cart/Cart";
 import Order from "./component/order/Order";
 import AddProduct from "./component/product/AddProduct";
 import ProductUpdate from "./component/product/ProductUpdate";
+import UserRegistration from "./component/user/UserRegistration";
 
 function App() {
   const router = createBrowserRouter(
@@ -37,6 +38,7 @@ function App() {
           path="/update-product/:productId/update"
           element={<ProductUpdate />}
         />
+        <Route path="/register" element={<UserRegistration />} />
       </Route>
     )
   );
