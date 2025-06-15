@@ -3,6 +3,7 @@ import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import { getCountryNames, registerUser } from "../../store/features/userSlice";
 import { useDispatch } from "react-redux";
 import { toast, ToastContainer } from "react-toastify";
+import { Link } from "react-router-dom";
 const UserRegistration = () => {
   const dispatch = useDispatch();
   const [countries, setCountries] = useState([]);
@@ -241,6 +242,13 @@ const UserRegistration = () => {
           <Button variant="success" type="submit" size="sm">
             Register
           </Button>
+        </div>
+
+        <div className="text-center mt-4 mb-4">
+          Have an account already?{" "}
+          <Link to={"/login"} style={{ textDecoration: "none" }}>
+            Login here
+          </Link>
         </div>
       </Form>
     </Container>

@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { api } from "../../component/services/api";
+import { api, privateApi } from "../../component/services/api";
 
 export const addToCart = createAsyncThunk(
   "cart/addToCart",
@@ -8,7 +8,7 @@ export const addToCart = createAsyncThunk(
     formData.append("productId", productId);
     formData.append("quantity", quantity);
 
-    const response = await api.post("/cartItems/item/add", formData);
+    const response = await privateApi.post("/cartItems/item/add", formData);
 
     return response.data;
   }
@@ -18,7 +18,6 @@ export const getUserCart = createAsyncThunk(
   "cart/getUserCart",
   async (userId) => {
     const response = await api.get(`/carts/user/${userId}/cart`);
-
     return response.data.data;
   }
 );
