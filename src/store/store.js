@@ -7,6 +7,8 @@ import cartReducer from "./features/cartSlice";
 import orderReducer from "./features/orderSlice";
 import imageReducer from "./features/imageSlice";
 import userReducer from "./features/userSlice";
+import authReducer from "./features/authSlice";
+import userProfileReducer from "./features/userProfileSlice";
 
 export const store = configureStore({
   reducer: {
@@ -18,5 +20,7 @@ export const store = configureStore({
     order: orderReducer,
     image: imageReducer,
     user: userReducer,
+    auth: authReducer,
+    userProfile: userProfileReducer,
   },
 });

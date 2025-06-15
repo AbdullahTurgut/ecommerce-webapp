@@ -12,6 +12,7 @@ import StockStatus from "../utils/StockStatus";
 const ProductDetails = () => {
   const { productId } = useParams();
   const dispatch = useDispatch();
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const { product, quantity } = useSelector((state) => state.product);
   const { successMessage, errorMessage } = useSelector((state) => state.cart);
   const productOutOfStock = product?.inventory <= 0;
@@ -20,16 +21,16 @@ const ProductDetails = () => {
     dispatch(getProductById(productId));
   }, [dispatch, productId]);
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
+    if (!isAuthenticated) {
+      toast.error("You need to be logged in to add items to the cart.");
+      return;
+    }
     try {
-      dispatch(addToCart({ productId, quantity }));
+      await dispatch(addToCart({ productId, quantity })).unwrap();
       toast.success(successMessage);
     } catch (error) {
-      if (errorMessage) {
-        toast.error(errorMessage);
-      } else {
-        toast.error(error.message);
-      }
+      toast.error(errorMessage || "Failed to add item to cart.");
     }
   };
 
@@ -41,7 +42,7 @@ const ProductDetails = () => {
   };
 
   return (
-    <div className="container">
+    <div className="container mt-4 mb-4">
       <ToastContainer />
       {product ? (
         <div className="row product-details">

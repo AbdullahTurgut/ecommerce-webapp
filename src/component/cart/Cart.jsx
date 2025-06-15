@@ -2,10 +2,10 @@ import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  clearCart,
   getUserCart,
   removeItemFromCart,
   updateQuantity,
-  clearCart,
 } from "../../store/features/cartSlice";
 import { Card } from "react-bootstrap";
 import ProductImage from "../utils/ProductImage";
@@ -20,7 +20,6 @@ const Cart = () => {
   const cart = useSelector((state) => state.cart);
   const cartId = useSelector((state) => state.cart.cartId);
   const isLoading = useSelector((state) => state.cart.isLoading);
-  const successMessage = useSelector((state) => state.order.successMessage);
 
   useEffect(() => {
     dispatch(getUserCart(userId));

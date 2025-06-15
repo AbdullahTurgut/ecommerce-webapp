@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { api } from "../../component/services/api";
+import { api, privateApi } from "../../component/services/api";
 
 export const getAllProducts = createAsyncThunk(
   "product/getAllProducts",
@@ -12,8 +12,7 @@ export const getAllProducts = createAsyncThunk(
 export const addNewProduct = createAsyncThunk(
   "product/addNewProduct",
   async (product) => {
-    const response = await api.post("/products/add-product", product);
-
+    const response = await privateApi.post("/products/add-product", product);
     return response.data.data;
   }
 );
@@ -21,7 +20,7 @@ export const addNewProduct = createAsyncThunk(
 export const updateProduct = createAsyncThunk(
   "product/updateProduct",
   async ({ productId, updatedProduct }) => {
-    const response = await api.put(
+    const response = await privateApi.put(
       `/products/${productId}/update`,
       updatedProduct
     );
@@ -31,7 +30,7 @@ export const updateProduct = createAsyncThunk(
 export const deleteProduct = createAsyncThunk(
   "product/deleteProduct",
   async (productId) => {
-    const response = await api.delete(`/products/${productId}/delete`);
+    const response = await privateApi.delete(`/products/${productId}/delete`);
 
     return response.data;
   }
