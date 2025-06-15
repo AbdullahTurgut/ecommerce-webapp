@@ -8,6 +8,7 @@ import orderReducer from "./features/orderSlice";
 import imageReducer from "./features/imageSlice";
 import userReducer from "./features/userSlice";
 import authReducer from "./features/authSlice";
+import userProfileReducer from "./features/userProfileSlice";
 
 export const store = configureStore({
   reducer: {
@@ -20,5 +21,6 @@ export const store = configureStore({
     image: imageReducer,
     user: userReducer,
     auth: authReducer,
+    userProfile: userProfileReducer,
   },
 });

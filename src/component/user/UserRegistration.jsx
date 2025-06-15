@@ -20,6 +20,7 @@ const UserRegistration = () => {
       state: "",
       city: "",
       street: "",
+      phone: "",
       addressType: "HOME",
     },
   ]);
@@ -154,7 +155,7 @@ const UserRegistration = () => {
         {addresses.map((address, index) => (
           <div key={index} className="border p-3 mb-3 rounded">
             <h4>Address {index + 1}</h4>
-            <Row>
+            <Row className="mb-2">
               <Col md={4}>
                 <Form.Group controlId={`country-${index}`}>
                   <Form.Label>Country:</Form.Label>
@@ -209,19 +210,36 @@ const UserRegistration = () => {
                 required
               />
             </Form.Group>
-            <Form.Group controlId={`addressType-${index}`}>
-              <Form.Label>Address Type:</Form.Label>
-              <Form.Control
-                as="select"
-                name="addressType"
-                value={address.addressType}
-                onChange={(e) => handleAddressChange(index, e)}
-              >
-                <option value="HOME">Home</option>
-                <option value="OFFICE">Office</option>
-                <option value="SHIPPING">Shipping</option>
-              </Form.Control>
-            </Form.Group>
+            <Row className="mt-2">
+              <Col md={4}>
+                <Form.Group controlId={`phone-${index}`}>
+                  <Form.Label>Phone Number:</Form.Label>
+                  <Form.Control
+                    type="phone"
+                    name="phone"
+                    value={address.phone}
+                    onChange={(e) => handleAddressChange(index, e)}
+                    required
+                  />
+                </Form.Group>
+              </Col>
+              <Col md={8}>
+                <Form.Group controlId={`addressType-${index}`}>
+                  <Form.Label>Address Type:</Form.Label>
+                  <Form.Control
+                    as="select"
+                    name="addressType"
+                    value={address.addressType}
+                    onChange={(e) => handleAddressChange(index, e)}
+                  >
+                    <option value="HOME">Home</option>
+                    <option value="OFFICE">Office</option>
+                    <option value="SHIPPING">Shipping</option>
+                  </Form.Control>
+                </Form.Group>
+              </Col>
+            </Row>
+
             <div className="d-flex justify-content-end">
               <Button
                 variant="danger"

@@ -6,7 +6,6 @@ export const getUserById = createAsyncThunk(
   "user/getUserById",
   async (userId) => {
     const response = await api.get(`/users/user/${userId}`);
-    console.log("User data fetched: 2", response.data);
     return response.data;
   }
 );
