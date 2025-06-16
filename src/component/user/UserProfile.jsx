@@ -1,206 +1,396 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  getUserProfile,
-  getUserAddresses,
-  deleteUserAddress,
-  updateUserAddress,
-} from "../../store/features/userProfileSlice";
-import {
-  Button,
-  Card,
-  Col,
-  Row,
-  Container,
-  Modal,
-  Form,
-} from "react-bootstrap";
+import { useParams, Link } from "react-router-dom";
+import { getUserById } from "../../store/features/userSlice";
 import { toast, ToastContainer } from "react-toastify";
+import { nanoid } from "nanoid";
+
+import { getUserOrders } from "../../store/features/orderSlice";
+import { Container, Row, Col, Card, ListGroup, Table } from "react-bootstrap";
+import placeholder from "../../assets/images/placeholder.png";
+import { FaTrash, FaEdit, FaPlus } from "react-icons/fa";
+import AddressForm from "../common/AddressForm";
+import {
+  updateAddress,
+  addAddress,
+  deleteAddress,
+  setUserAddresses,
+} from "../../store/features/userSlice";
+
 const UserProfile = () => {
-  const userId = localStorage.getItem("userId");
   const dispatch = useDispatch();
-  const { userProfile, addresses } = useSelector((state) => state.userProfile);
-  const [showModal, setShowModal] = useState(false);
-  const [selectedAddress, setSelectedAddress] = useState(null);
-  const [formData, setFormData] = useState({
-    country: "",
-    state: "",
-    city: "",
-    street: "",
-    phone: "",
+  const { userId } = useParams();
+  const user = useSelector((state) => state.user.user);
+  const loading = useSelector((state) => state.order.loading);
+  const orders = useSelector((state) => state.order.orders);
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingAddressId, setEditingAddressId] = useState(null);
+  const [showForm, setShowForm] = useState(false);
+
+  const [newAddress, setNewAddress] = useState({
     addressType: "",
+    street: "",
+    city: "",
+    state: "",
+    country: "",
+    phone: "",
   });
 
-  useEffect(() => {
-    if (userId) {
-      dispatch(getUserProfile(userId));
-      dispatch(getUserAddresses(userId));
-    }
-  }, [dispatch, userId]);
-
-  const handleDeleteUserAddress = async (addressId) => {
-    try {
-      const result = await dispatch(deleteUserAddress(addressId)).unwrap();
-      toast.success(result.message);
-      dispatch(getUserAddresses(userId));
-    } catch (error) {
-      toast.error(error.message || "Failed to delete address.");
-    }
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewAddress((prevAddress) => ({
+      ...prevAddress,
+      [name]: value,
+    }));
   };
 
   const handleEditClick = (address) => {
-    setSelectedAddress(address);
-    setFormData(address);
-    setShowModal(true);
+    setNewAddress(address);
+    setIsEditing(true);
+    setEditingAddressId(address.id);
+    setShowForm(true);
   };
 
-  const handleFormChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  const handleAddAddress = async () => {
+    const updatedAddressList = [
+      ...user.addressList,
+      { ...newAddress, id: nanoid() },
+    ];
 
-  const handleUpdateAddress = async () => {
+    dispatch(setUserAddresses(updatedAddressList));
     try {
-      await dispatch(
-        updateUserAddress({
-          id: selectedAddress.id,
-          addressData: formData,
-        })
+      const response = await dispatch(
+        addAddress({ address: newAddress, userId })
       ).unwrap();
-      toast.success("Address updated successfully");
-      dispatch(getUserAddresses(userId));
-      setShowModal(false);
+      toast.success(response.message);
+      resetForm();
     } catch (error) {
-      toast.error(error.message || "Update failed");
+      console.error(error);
+
+      dispatch(setUserAddresses(user.addressList));
     }
   };
 
-  return (
-    <Container className="d-flex justify-content-center align-items-center mt-2 mb-2">
-      <ToastContainer />
-      <Row className="p-4 rounded" style={{ width: "100%", maxWidth: "600px" }}>
-        {userProfile && (
-          <Col md={12}>
-            <Card className="shadow rounded">
-              <Card.Body>
-                <Card.Title className="mb-3">👤 User Profile</Card.Title>
-                <Row>
-                  <Col md={12}>
-                    <p>
-                      <strong>Full Name:</strong> {userProfile.firstName}{" "}
-                      {userProfile.lastName}
-                    </p>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col md={12}>
-                    <p>
-                      <strong>Email:</strong> {userProfile.email}
-                    </p>
-                  </Col>
-                </Row>
-              </Card.Body>
-            </Card>
-          </Col>
-        )}
+  const handleUpdateAddress = async (id) => {
+    const updatedAddressList = user.addressList.map((address) =>
+      address.id === id ? { ...newAddress, id } : address
+    );
 
-        {addresses.length > 0 ? (
-          addresses.map((address, index) => (
-            <Col md={12} key={index} className="mb-4">
+    dispatch(setUserAddresses(updatedAddressList));
+
+    try {
+      const response = await dispatch(
+        updateAddress({ id, address: newAddress })
+      ).unwrap();
+      toast.success(response.message);
+      resetForm();
+    } catch (error) {
+      toast.error(error.message);
+      dispatch(setUserAddresses(user.addressList));
+    }
+  };
+
+  const handleDeleteAddress = async (id) => {
+    const updatedAddressList = user.addressList.filter(
+      (address) => address.id !== id
+    );
+    dispatch(setUserAddresses(updatedAddressList));
+
+    try {
+      const response = await dispatch(deleteAddress({ id })).unwrap();
+      toast.success(response.message);
+    } catch (error) {
+      toast.error(error.message);
+      dispatch(setUserAddresses(user.addressList));
+    }
+  };
+
+  const resetForm = () => {
+    setNewAddress({
+      addressType: "",
+      street: "",
+      city: "",
+      state: "",
+      country: "",
+      phone: "",
+    });
+    setShowForm(false);
+    setIsEditing(false);
+    setEditingAddressId(null);
+  };
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      if (userId) {
+        try {
+          await dispatch(getUserById(userId)).unwrap();
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    };
+    fetchUser();
+  }, [userId, dispatch]);
+
+  useEffect(() => {
+    dispatch(getUserOrders(userId));
+  }, [dispatch, userId]);
+
+  return (
+    <Container className="mt-5 mb-5">
+      <ToastContainer />
+      <h2 className="cart-title">User Dashboard</h2>
+      {user ? (
+        <>
+          <Row>
+            <Col md={4}>
               <Card>
-                <Card.Body>
-                  <Card.Title>Address {index + 1} </Card.Title>
-                  <Card.Text>
-                    <strong>Country:</strong> {address.country} <br />
-                    <strong>State:</strong> {address.state} <br />
-                    <strong>City:</strong> {address.city} <br />
-                    <strong>Street:</strong> {address.street} <br />
-                    <strong>Phone:</strong> {address.phone} <br />
-                    <strong>Address Type:</strong> {address.addressType} <br />
-                  </Card.Text>
-                  <div className="d-flex justify-content-between">
-                    <Button
-                      variant="warning"
-                      size="sm"
-                      onClick={() => handleEditClick(address)}
-                    >
-                      ✏️ Update
-                    </Button>
-                    <Button
-                      variant="danger"
-                      size="sm"
-                      onClick={() => handleDeleteUserAddress(address.id)}
-                    >
-                      🗑 Remove
-                    </Button>
+                <Card.Header>Personal User Information</Card.Header>
+                <Card.Body className="text-center">
+                  <div className="mb-3">
+                    <img
+                      src={user.photo || placeholder}
+                      alt="User Photo"
+                      style={{ width: "100px", height: "100px" }}
+                      className="image-fluid rounded-circle"
+                    />
                   </div>
+
+                  <Card.Text>
+                    {" "}
+                    <strong> Full Name :</strong> {user.firstName}{" "}
+                    {user.lastName}
+                  </Card.Text>
+
+                  <Card.Text>
+                    {" "}
+                    <strong> Email :</strong> {user.email}
+                  </Card.Text>
                 </Card.Body>
               </Card>
             </Col>
-          ))
-        ) : (
-          <p>No addresses found.</p>
-        )}
-      </Row>
 
-      <Modal show={showModal} onHide={() => setShowModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Edit Address</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            <Form.Group>
-              <Form.Label>City</Form.Label>
-              <Form.Control
-                type="text"
-                name="city"
-                value={formData.city}
-                onChange={handleFormChange}
-              />
-            </Form.Group>
-            <Form.Group>
-              <Form.Label>Street</Form.Label>
-              <Form.Control
-                type="text"
-                name="street"
-                value={formData.street}
-                onChange={handleFormChange}
-              />
-            </Form.Group>
-            <Form.Group>
-              <Form.Label>Phone</Form.Label>
-              <Form.Control
-                type="text"
-                name="phone"
-                value={formData.phone}
-                onChange={handleFormChange}
-              />
-            </Form.Group>
-            <Form.Group>
-              <Form.Label>Address Type</Form.Label>
-              <Form.Control
-                as="select"
-                name="addressType"
-                value={formData.addressType}
-                onChange={handleFormChange}
-              >
-                <option value="HOME">Home</option>
-                <option value="OFFICE">Office</option>
-                <option value="SHIPPING">Shipping</option>
-              </Form.Control>
-            </Form.Group>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowModal(false)}>
-            Cancel
-          </Button>
-          <Button variant="primary" onClick={handleUpdateAddress}>
-            Save Changes
-          </Button>
-        </Modal.Footer>
-      </Modal>
+            <Col md={8}>
+              <Card className="mb-4">
+                <Card.Header>User Addresses</Card.Header>
+
+                <ListGroup variant="flush">
+                  {user.addressList && user.addressList.length > 0 ? (
+                    user.addressList.map((address) => (
+                      <ListGroup.Item key={address.id}>
+                        <Card className="p-2 mb-2 shadow">
+                          <Card.Body>
+                            <Card.Text>
+                              {" "}
+                              {address.addressType} ADDRESS :{" "}
+                            </Card.Text>
+                            <hr />
+
+                            <Card.Text>
+                              {address.street}, {address.city}, {address.state},{" "}
+                              {address.country}
+                            </Card.Text>
+                          </Card.Body>
+
+                          <div className="d-flex gap-4">
+                            <Link>
+                              <span
+                                className="text-danger"
+                                onClick={() => handleDeleteAddress(address.id)}
+                              >
+                                <FaTrash />
+                              </span>
+                            </Link>
+                            <Link variant="primary">
+                              <span
+                                className="text-info"
+                                onClick={() => handleEditClick(address)}
+                              >
+                                <FaEdit />
+                              </span>
+                            </Link>
+                          </div>
+                        </Card>
+                      </ListGroup.Item>
+                    ))
+                  ) : (
+                    <p> No addresses found</p>
+                  )}
+                </ListGroup>
+
+                <Link
+                  className="mb-2 ms-2"
+                  variant="success"
+                  onClick={() => {
+                    setShowForm(true);
+                    setIsEditing(false);
+                  }}
+                >
+                  <FaPlus />
+                </Link>
+
+                {showForm && (
+                  <AddressForm
+                    address={newAddress}
+                    onChange={handleInputChange}
+                    onSubmit={
+                      isEditing
+                        ? () => handleUpdateAddress(editingAddressId)
+                        : handleAddAddress
+                    }
+                    isEditing={isEditing}
+                    onCancel={resetForm}
+                    showButtons={true}
+                    showCheck={true}
+                    showTitle={true}
+                  />
+                )}
+              </Card>
+            </Col>
+          </Row>
+
+          <Row>
+            <Col>
+              <Card>
+                <Card.Header>Orders History</Card.Header>
+                <Container className="mt-4">
+                  {Array.isArray(orders) && orders.length === 0 ? (
+                    <p>No orders found at the moment.</p>
+                  ) : (
+                    <Table>
+                      <thead>
+                        <tr>
+                          <th>Order ID</th>
+                          <th>Date</th>
+                          <th>Total Amount</th>
+                          <th>Status</th>
+                          <th>Items</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {Array.isArray(orders) &&
+                          orders.map((order, index) => {
+                            return (
+                              <tr key={index}>
+                                <td>{order.id}</td>
+                                <td>
+                                  {new Date(
+                                    order.orderDate
+                                  ).toLocaleDateString()}
+                                </td>
+                                <td>${order.totalAmount?.toFixed(2)}</td>
+                                <td>{order.status}</td>
+                                <td>
+                                  <Table size="sm" striped bordered hover>
+                                    <thead>
+                                      <tr>
+                                        <th>Item ID</th>
+                                        <th>Name</th>
+                                        <th>Brand</th>
+                                        <th>Quantity</th>
+                                        <th>Unit Price</th>
+                                        <th>Total Price</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      {Array.isArray(order.items) &&
+                                        order.items.map((item, itemIndex) => (
+                                          <tr key={itemIndex}>
+                                            <td>{item.productId}</td>
+                                            <td>{item.productName}</td>
+                                            <td>{item.productBrand}</td>
+                                            <td>{item.quantity}</td>
+                                            <td>${item.price.toFixed(2)}</td>
+                                            <td>
+                                              $
+                                              {(
+                                                item.quantity * item.price
+                                              ).toFixed(2)}
+                                            </td>
+                                          </tr>
+                                        ))}
+                                    </tbody>
+                                  </Table>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                      </tbody>
+                    </Table>
+                  )}
+                  <div className="mb-2">
+                    <Link to="/products">Start Shopping </Link>
+                  </div>
+                </Container>
+              </Card>
+            </Col>
+          </Row>
+        </>
+      ) : (
+        <p>Loading user information....</p>
+      )}
     </Container>
   );
 };
 
 export default UserProfile;
+
+/* 
+
+Assignment 16:
+
+1. Modify the addres API in our backend to include a phone number;
+
+2. Implement the UserProfile component to displays the following information:
+
+      1.  The user full name and email address;
+      2.  The list of user orders with each order information on a separate card.
+      3.  The list of user addresses with each address information on a separate card
+      with the following options:
+        a.  Enable user to remove /delete address.
+        b.  Enable user to edit/update address.
+        c.  Enable user to add new address
+
+
+ You don't have to worry about the implementation of(add new address and update the address),
+  you just have to indicate these actions with a Link / button on the card. But the
+  delete implementation should be done since this is a straigthforward implementation.
+
+
+Hint:
+You may want to take a proper look at the address api implementation at the backend.
+
+
+Finally, let all your actions and data pass through the redux store ( userProfileSlice ).
+
+Please remember to handle any potential errors or edge cases.
+
+Remember, this is just a basic implementation. You might need to make some adjustments
+ and enhancements based on your specific requirements.
+
+
+Good luck!!!
+
+
+
+
+  <div className='d-flex gap-4'>
+                            <Link >
+                              <span className='text-danger'>
+                                <FaTrash />
+                              </span>
+                            </Link>
+                            <Link  variant='primary'>
+                              <span className='text-info'>
+                                <FaEdit />
+                              </span>
+                            </Link>
+                          </div>
+
+
+                             <Link className='mb-2 ms-2'  variant='success'  >
+                  <FaPlus />
+                </Link>
+
+*/

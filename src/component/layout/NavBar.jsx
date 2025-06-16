@@ -50,7 +50,10 @@ const NavBar = () => {
             <NavDropdown title="Account">
               {userId ? (
                 <>
-                  <NavDropdown.Item to={"/user-profile"} as={Link}>
+                  <NavDropdown.Item
+                    to={`/user-profile/${userId}/profile`}
+                    as={Link}
+                  >
                     My Account
                   </NavDropdown.Item>
 

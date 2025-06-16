@@ -6,7 +6,7 @@ export const getUserById = createAsyncThunk(
   "user/getUserById",
   async (userId) => {
     const response = await api.get(`/users/user/${userId}`);
-    return response.data;
+    return response.data.data;
   }
 );
 
@@ -20,13 +20,11 @@ export const registerUser = createAsyncThunk(
       password: user.password,
       addressList: addresses,
     };
-    const response = await api.post("/users/create-user", payload);
-
+    const response = await api.post("/users/add", payload);
     return response.data;
   }
 );
 
-// rest call for countries api
 export const getCountryNames = createAsyncThunk(
   "user/getCountryNames",
   async () => {
@@ -38,38 +36,82 @@ export const getCountryNames = createAsyncThunk(
     return countryNames;
   }
 );
+/* Add CRUD for address api */
+// Add Address Thunk
+export const addAddress = createAsyncThunk(
+  "user/addAddress",
+  async ({ userId, address }) => {
+    const response = await api.post(`/addresses/${userId}/create`, [address]);
+    return response.data;
+  }
+);
+
+// Fetch User Addresses Thunk
+export const fetchAddresses = createAsyncThunk(
+  "user/fetchAddresses",
+  async (userId) => {
+    const response = await api.get(`/addresses/address/user/${userId}`);
+    return response.data;
+  }
+);
+
+// Update Address Thunk
+export const updateAddress = createAsyncThunk(
+  "user/updateAddress",
+  async ({ id, address }) => {
+    const response = await api.put(`/addresses/address/${id}/update`, address);
+    return response.data;
+  }
+);
+
+// Delete Address Thunk
+export const deleteAddress = createAsyncThunk(
+  "user/deleteAddress",
+  async ({ id }) => {
+    const response = await api.delete(`/addresses/address/${id}/delete`);
+    return response.data;
+  }
+);
 
 const initialState = {
   user: null,
-  isLoading: true,
+  countryNames: [],
+  loading: false,
   errorMessage: null,
 };
 
 const userSlice = createSlice({
   name: "user",
   initialState,
-  reducers: {},
+  reducers: {
+    setUser(state, action) {
+      state.user = action.payload;
+    },
+    setUserAddresses(state, action) {
+      state.user.addressList = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getUserById.fulfilled, (state, action) => {
         state.user = action.payload;
-        state.isLoading = false;
-        state.errorMessage = null;
+        state.loading = false;
       })
       .addCase(getUserById.rejected, (state, action) => {
-        state.isLoading = false;
         state.errorMessage = action.error.message;
+        state.loading = false;
       })
       .addCase(registerUser.fulfilled, (state, action) => {
         state.user = action.payload;
-        state.isLoading = false;
-        state.errorMessage = null;
+        state.loading = false;
       })
       .addCase(registerUser.rejected, (state, action) => {
-        state.isLoading = false;
         state.errorMessage = action.error.message;
+        state.loading = false;
       });
   },
 });
+
+export const { setUser, setUserAddresses } = userSlice.actions;
 
 export default userSlice.reducer;

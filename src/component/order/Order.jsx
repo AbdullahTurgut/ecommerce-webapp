@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getUserOrders } from "../../store/features/orderSlice";
 import { Link, useParams } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
 
 const Order = () => {
   const { userId } = useParams();
@@ -11,13 +10,10 @@ const Order = () => {
 
   useEffect(() => {
     dispatch(getUserOrders(userId));
-
-    // toast.success("Orders placed successfully.");
   }, [dispatch, userId]);
 
   return (
     <div className="container mt-5">
-      <ToastContainer />
       <div className="row">
         <div className="col-4">
           <h3 className="mb-4 cart-title">My Order History</h3>

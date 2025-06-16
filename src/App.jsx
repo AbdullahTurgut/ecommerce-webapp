@@ -46,7 +46,10 @@ function App() {
         >
           <Route path="/user/:userId/my-cart" element={<Cart />} />
           <Route path="/user/:userId/my-orders" element={<Order />} />
-          <Route path="/user-profile" element={<UserProfile />} />
+          <Route
+            path="/user-profile/:userId/profile"
+            element={<UserProfile />}
+          />
         </Route>
 
         <Route
