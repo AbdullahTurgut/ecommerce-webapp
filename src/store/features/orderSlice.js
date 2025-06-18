@@ -18,6 +18,20 @@ export const getUserOrders = createAsyncThunk(
   }
 );
 
+export const createPaymentIntent = createAsyncThunk(
+  "order/createPaymentIntent",
+  async ({ amount, currency }) => {
+    console.log("Amount and currency from the slice", { amount, currency });
+    const response = await api.post(`/orders/create-payment-intent`, {
+      amount,
+      currency,
+    });
+    console.log("payment response", response);
+    console.log("payment response", response.data);
+    return response.data;
+  }
+);
+
 const initialState = {
   orders: [],
   isLoading: true,

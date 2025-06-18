@@ -18,6 +18,7 @@ export const getUserCart = createAsyncThunk(
   "cart/getUserCart",
   async (userId) => {
     const response = await api.get(`/carts/user/${userId}/cart`);
+
     return response.data.data;
   }
 );

@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
   clearCart,
@@ -20,6 +20,7 @@ const Cart = () => {
   const cart = useSelector((state) => state.cart);
   const cartId = useSelector((state) => state.cart.cartId);
   const isLoading = useSelector((state) => state.cart.isLoading);
+  const navigate = useNavigate();
 
   useEffect(() => {
     dispatch(getUserCart(userId));
@@ -61,17 +62,7 @@ const Cart = () => {
   };
 
   const handlePlaceOrder = async () => {
-    if (cart.items.length > 0) {
-      try {
-        const result = await dispatch(placeOrders(userId)).unwrap();
-        dispatch(clearCart());
-        toast.success(result.message);
-      } catch (error) {
-        toast.error(error.message);
-      }
-    } else {
-      toast.error("Cannot place order on empty cart");
-    }
+    navigate(`/checkout/${userId}/checkout`);
   };
 
   if (isLoading) {

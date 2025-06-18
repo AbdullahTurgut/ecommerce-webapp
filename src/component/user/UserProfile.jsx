@@ -16,12 +16,13 @@ import {
   deleteAddress,
   setUserAddresses,
 } from "../../store/features/userSlice";
+import LoadSpinner from "../common/LoadSpinner";
 
 const UserProfile = () => {
   const dispatch = useDispatch();
   const { userId } = useParams();
   const user = useSelector((state) => state.user.user);
-  const loading = useSelector((state) => state.order.loading);
+  const loading = useSelector((state) => state.order.isLoading);
   const orders = useSelector((state) => state.order.orders);
 
   const [isEditing, setIsEditing] = useState(false);
@@ -137,6 +138,14 @@ const UserProfile = () => {
     dispatch(getUserOrders(userId));
   }, [dispatch, userId]);
 
+  if (loading) {
+    return (
+      <div>
+        <LoadSpinner />
+      </div>
+    );
+  }
+
   return (
     <Container className="mt-5 mb-5">
       <ToastContainer />
@@ -244,6 +253,7 @@ const UserProfile = () => {
                     showButtons={true}
                     showCheck={true}
                     showTitle={true}
+                    showAddressType={true}
                   />
                 )}
               </Card>
@@ -294,8 +304,8 @@ const UserProfile = () => {
                                       </tr>
                                     </thead>
                                     <tbody>
-                                      {Array.isArray(order.items) &&
-                                        order.items.map((item, itemIndex) => (
+                                      {Array.isArray(order?.items) &&
+                                        order?.items.map((item, itemIndex) => (
                                           <tr key={itemIndex}>
                                             <td>{item.productId}</td>
                                             <td>{item.productName}</td>
@@ -335,62 +345,3 @@ const UserProfile = () => {
 };
 
 export default UserProfile;
-
-/* 
-
-Assignment 16:
-
-1. Modify the addres API in our backend to include a phone number;
-
-2. Implement the UserProfile component to displays the following information:
-
-      1.  The user full name and email address;
-      2.  The list of user orders with each order information on a separate card.
-      3.  The list of user addresses with each address information on a separate card
-      with the following options:
-        a.  Enable user to remove /delete address.
-        b.  Enable user to edit/update address.
-        c.  Enable user to add new address
-
-
- You don't have to worry about the implementation of(add new address and update the address),
-  you just have to indicate these actions with a Link / button on the card. But the
-  delete implementation should be done since this is a straigthforward implementation.
-
-
-Hint:
-You may want to take a proper look at the address api implementation at the backend.
-
-
-Finally, let all your actions and data pass through the redux store ( userProfileSlice ).
-
-Please remember to handle any potential errors or edge cases.
-
-Remember, this is just a basic implementation. You might need to make some adjustments
- and enhancements based on your specific requirements.
-
-
-Good luck!!!
-
-
-
-
-  <div className='d-flex gap-4'>
-                            <Link >
-                              <span className='text-danger'>
-                                <FaTrash />
-                              </span>
-                            </Link>
-                            <Link  variant='primary'>
-                              <span className='text-info'>
-                                <FaEdit />
-                              </span>
-                            </Link>
-                          </div>
-
-
-                             <Link className='mb-2 ms-2'  variant='success'  >
-                  <FaPlus />
-                </Link>
-
-*/
