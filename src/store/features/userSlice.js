@@ -20,7 +20,7 @@ export const registerUser = createAsyncThunk(
       password: user.password,
       addressList: addresses,
     };
-    const response = await api.post("/users/add", payload);
+    const response = await api.post("/users/create-user", payload);
     return response.data;
   }
 );
@@ -29,10 +29,13 @@ export const getCountryNames = createAsyncThunk(
   "user/getCountryNames",
   async () => {
     const response = await axios.get(
-      "https://restcountries.com/v3.1/all?fields=name"
+      "https://restcountries.com/v3.1/all?fields=name,cca2"
     );
-    const countryNames = response.data.map((country) => country.name.common);
-    countryNames.sort((a, b) => a.localeCompare(b));
+    const countryNames = response.data.map((country) => ({
+      name: country.name.common,
+      code: country.cca2,
+    }));
+    countryNames.sort((a, b) => a.name.localeCompare(b.name));
     return countryNames;
   }
 );

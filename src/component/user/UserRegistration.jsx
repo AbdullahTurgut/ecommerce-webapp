@@ -49,6 +49,7 @@ const UserRegistration = () => {
         state: "",
         city: "",
         street: "",
+        phone: "",
         addressType: "HOME",
       },
     ]);
@@ -152,6 +153,7 @@ const UserRegistration = () => {
               onChange={(e) => handleAddressChange(index, e)}
               onCancel={() => removeAddress(index)}
               showButtons={true}
+              showAddressType={true}
             />
           </div>
         ))}

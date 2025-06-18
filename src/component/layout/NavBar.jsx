@@ -8,9 +8,9 @@ import { logoutUser } from "../services/authService";
 
 const NavBar = () => {
   const dispatch = useDispatch();
-  const cart = useSelector((state) => state.cart);
   const userRoles = useSelector((state) => state.auth.roles);
   const userId = localStorage.getItem("userId");
+  const cart = useSelector((state) => state.cart);
 
   const handleLogout = () => {
     logoutUser();
@@ -55,12 +55,6 @@ const NavBar = () => {
                     as={Link}
                   >
                     My Account
-                  </NavDropdown.Item>
-
-                  <NavDropdown.Divider />
-
-                  <NavDropdown.Item to={`/user/${userId}/my-orders`} as={Link}>
-                    My Orders
                   </NavDropdown.Item>
 
                   <NavDropdown.Divider />
