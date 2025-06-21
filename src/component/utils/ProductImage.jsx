@@ -6,9 +6,8 @@ const ProductImage = ({ productId }) => {
   useEffect(() => {
     const fetchProductImage = async (id) => {
       try {
-        const response = await fetch(
-          `http://localhost:8080/api/v1/images/image/download/${id}`
-        );
+        const baseUrl = import.meta.env.VITE_API_BASE_URL;
+        const response = await fetch(`${baseUrl}/images/image/download/${id}`);
         const blob = await response.blob();
         const reader = new FileReader();
         reader.onloadend = () => {

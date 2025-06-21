@@ -17,16 +17,23 @@ const NavBar = () => {
   };
 
   useEffect(() => {
-    if (userId) {
-      dispatch(getUserCart(userId));
-    }
+    const fetchCart = async () => {
+      if (!userId) return;
+      try {
+        await dispatch(getUserCart(userId)).unwrap();
+      } catch (err) {
+        console.warn("cart not found", err.message);
+      }
+    };
+
+    fetchCart();
   }, [dispatch, userId]);
 
   return (
     <Navbar expand="lg" sticky="top" className="nav-bg">
       <Container>
         <Navbar.Brand to={"/"} as={Link}>
-          <span className="shop-home">buyNow.com</span>
+          <span className="shop-home">zenCargo.com</span>
         </Navbar.Brand>
 
         <Navbar.Toggle />

@@ -10,7 +10,7 @@ const Hero = () => {
       <HeroSlider setCurrentSlide={currentSlide} />
       <div className="hero-content">
         <h1>
-          Welcome to <span className="text-primary">buyNow</span>.com
+          Welcome to <span className="text-primary">zenCargo</span>.com
         </h1>
         <SearchBar />
         <div className="home-button-container">
