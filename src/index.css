@@ -564,12 +564,95 @@
     margin: 10px;
 }
 
+/* Start image search area */
+
+.image-search-container
+{
+    text-align: center;
+}
+
+.search-image-icon
+{
+    cursor: pointer;
+    width: 50px;
+    height: 50px;
+    margin-left: 5px;
+    background-color: var(--light-gray);
+
+}
+
+.image-uploader
+{
+    border: 1px dashed var(--light-gray);
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    position: relative;
+    width: 500px;
+    height: 200px;
+    margin: 0 auto;
+    box-sizing: border-box;
+    background-color: #827878a5;
+    border-radius: 8px;
+
+}
+
+.image-uploader:hover
+{
+    background-color: var(--image-search-color);
+    border-color: #999;
+}
+
+.image-uploader svg
+{
+    margin-bottom: 10px;
+    fill: var(--light-gray);
+}
+
+.image-uploader img
+{
+    max-width: 100%;
+    max-height: 100%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    object-fit: contain;
+}
+
+
+.image-url-input
+{
+    text-align: center;
+    margin-top: 20px;
+}
+
+.image-search-button
+{
+    background-color: #484f58;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.image-search-button:hover
+{
+    background-color: var(--image-search-color);
+}
+/* End image search area */
+
 
 :root
 {
     --search-button-color: #c38212;
     --dark-background: #000000b3;
     --nav-background: #f1f0f0;
+     /* For image searching */
+    --image-search-color: #744f4fa9;
+        --light-gray: #ccc;
 
     /* Default color */
 }

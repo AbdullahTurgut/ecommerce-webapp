@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllCategories } from "../../store/features/categorySlice";
 import {
@@ -6,13 +6,16 @@ import {
   setSelectedCategory,
   clearFilters,
 } from "../../store/features/searchSlice";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import searchIcon from "../../assets/images/upload.svg";
+import ImageSearch from "./ImageSearch";
 
 const SearchBar = () => {
   const dispatch = useDispatch(); // hook to dispatch actions
   const { categoryId } = useParams();
-  const navigate = useNavigate();
+
   const categories = useSelector((state) => state.category.categories);
+  const [showImageSearch, setShowImageSearch] = useState(false);
 
   //  const searchQuery = useSelector((state) => state.search.searchQuery);
   //const selectedCategory = useSelector( (state) => state.search.selectedCategory ); bunların yerine
@@ -39,7 +42,7 @@ const SearchBar = () => {
 
   const handleClearFilters = () => {
     dispatch(clearFilters());
-    navigate("/products");
+    setShowImageSearch(false);
   };
 
   const handleSearchQueryChange = (e) => {
@@ -51,31 +54,42 @@ const SearchBar = () => {
   }, [dispatch]);
 
   return (
-    <div className="search-bar input-group input-group-sm">
-      <select
-        value={selectedCategory}
-        onChange={handleCategoryChange}
-        className="form-control-sm"
-      >
-        <option value="all">All Category</option>
-        {categories.map((category, index) => (
-          <option key={index} value={category.name}>
-            {category.name}
-          </option>
-        ))}
-      </select>
+    <>
+      <div className="search-bar input-group input-group-sm">
+        <select
+          value={selectedCategory}
+          onChange={handleCategoryChange}
+          className="form-control-sm"
+        >
+          <option value="all">All Category</option>
+          {categories.map((category, index) => (
+            <option key={index} value={category.name}>
+              {category.name}
+            </option>
+          ))}
+        </select>
 
-      <input
-        type="text"
-        value={searchQuery}
-        onChange={handleSearchQueryChange}
-        className="form-control"
-        placeholder="Search products (e.g. iPhone, MacBook, etc.)"
-      />
-      <button className="search-button" onClick={handleClearFilters}>
-        Clear Filter
-      </button>
-    </div>
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={handleSearchQueryChange}
+          className="form-control"
+          placeholder="Search products (e.g. iPhone, MacBook, etc.)"
+        />
+
+        <img
+          src={searchIcon}
+          alt="Image Search"
+          className="search-image-icon"
+          onClick={() => setShowImageSearch((prev) => !prev)}
+        />
+
+        <button className="search-button" onClick={handleClearFilters}>
+          Clear Filter
+        </button>
+      </div>
+      {showImageSearch && <ImageSearch />}
+    </>
   );
 };
 
