@@ -14,7 +14,7 @@ import StockStatus from "../utils/StockStatus";
 const Home = () => {
   const dispatch = useDispatch();
   const [filteredProducts, setFilteredProducts] = useState([]);
-  const { searchQuery, selectedCategory } = useSelector(
+  const { searchQuery, selectedCategory, imageSearchResults } = useSelector(
     (state) => state.search
   );
 
@@ -42,10 +42,17 @@ const Home = () => {
           .toLowerCase()
           .includes(selectedCategory.toLowerCase());
 
-      return matchesQuery && matchesCategory;
+      const matchesImageSearch =
+        imageSearchResults.length > 0
+          ? imageSearchResults.some((result) =>
+              product.toLowerCase().includes(result.name.toLowerCase())
+            )
+          : true;
+
+      return matchesQuery && matchesCategory && matchesImageSearch;
     });
     setFilteredProducts(results);
-  }, [searchQuery, selectedCategory, products]);
+  }, [searchQuery, selectedCategory, imageSearchResults, products]);
 
   useEffect(() => {
     dispatch(setTotalItems(filteredProducts.length));
