@@ -67,7 +67,7 @@ const Product = () => {
       const matchesImageSearch =
         imageSearchResults.length > 0
           ? imageSearchResults.some((result) =>
-              product.toLowerCase().includes(result.name.toLowerCase())
+              product.name.toLowerCase().includes(result.name.toLowerCase())
             )
           : true;
 

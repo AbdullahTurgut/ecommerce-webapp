@@ -5,11 +5,12 @@ import { uploadImages } from "../../store/features/imageSlice";
 import { toast, ToastContainer } from "react-toastify";
 import { Link } from "react-router-dom";
 import { BsDash, BsPlus } from "react-icons/bs";
+import { Spinner } from "react-bootstrap";
 
 const ImageUploader = ({ productId }) => {
   const dispatch = useDispatch();
   const fileInputRefs = useRef([]); // use directly manipulate the DOM
-
+  const [isLoading, setIsLoading] = useState(false);
   const [images, setImages] = useState([]);
   const [imageInputs, setImageInputs] = useState([{ id: nanoid() }]);
 
@@ -37,7 +38,9 @@ const ImageUploader = ({ productId }) => {
     if (!productId) {
       return;
     }
+
     if (Array.isArray(images) && images.length > 0) {
+      setIsLoading(true);
       try {
         console.log("the product id from the component", productId);
         console.log("the images from the component", images);
@@ -51,6 +54,8 @@ const ImageUploader = ({ productId }) => {
         toast.success(result.message);
       } catch (error) {
         toast.error(error.message);
+      } finally {
+        setIsLoading(false);
       }
     }
   };
@@ -63,6 +68,7 @@ const ImageUploader = ({ productId }) => {
 
   return (
     <form onSubmit={handleImageUpload}>
+      <ToastContainer />
       <div className="mt-4">
         <h5>Upload product image(s)</h5>
         <Link to={"#"} onClick={handleAddImageInput} className="icon">
@@ -92,8 +98,19 @@ const ImageUploader = ({ productId }) => {
           ))}
         </div>
         {imageInputs.length > 0 && (
-          <button className="btn btn-primary btn-sm" type="submit">
-            Upload Images
+          <button
+            className="btn btn-primary btn-sm"
+            disabled={isLoading}
+            type="submit"
+          >
+            {isLoading ? (
+              <>
+                <Spinner animation="border" size="sm" color="#a88c3d" />{" "}
+                Uploading product
+              </>
+            ) : (
+              "Upload Images"
+            )}
           </button>
         )}
       </div>
